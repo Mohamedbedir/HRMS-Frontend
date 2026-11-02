@@ -7,6 +7,7 @@ import { LeaveCancelModal } from '../../components/leave-cancel-modal/leave-canc
 import { LeaveRejectModal } from '../../components/leave-reject-modal/leave-reject-modal';
 import { LeaveRequest } from '../../models/leave-request.model';
 import { LeaveRequestService } from '../../services/leave-request.service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 type LeaveAction = 'approve' | 'cancel' | 'reject';
 
@@ -56,7 +57,11 @@ export class LeaveRequestDetails implements OnInit {
   }
 
   goBack(): void {
-    void this.router.navigate(['/admin/leave-requests']);
+    void this.router.navigate([managementRoutePrefix(this.router), 'leave-requests']);
+  }
+
+  get routePrefix(): '/admin' | '/hr' {
+    return managementRoutePrefix(this.router);
   }
 
   getStatusClass(status: string): string {

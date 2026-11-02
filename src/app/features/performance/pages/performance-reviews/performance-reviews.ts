@@ -5,6 +5,7 @@ import { ToastrService } from '@relynn/ngx-toastr';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { PerformanceReviewCreateModal } from '../../components/performance-review-create-modal/performance-review-create-modal';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 @Component({
   imports: [DatePipe, PerformanceReviewCreateModal],
@@ -63,6 +64,10 @@ export class PerformanceReviews implements OnInit {
   }
 
   openReview(id: number): void {
-    void this.router.navigate(['/admin/performance-reviews', id]);
+    void this.router.navigate([
+      managementRoutePrefix(this.router),
+      'performance-reviews',
+      id,
+    ]);
   }
 }

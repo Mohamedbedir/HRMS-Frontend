@@ -7,6 +7,7 @@ import { PayrollCancelModal } from '../../components/payroll-cancel-modal/payrol
 import { PayrollPayModal } from '../../components/payroll-pay-modal/payroll-pay-modal';
 import { PayrollDetailsResponse, PayrollItemResponse } from '../../models/payroll-response';
 import { PayrollService } from '../../services/payroll.service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 type PayrollAction = 'approve' | 'cancel' | 'pay';
 
@@ -47,7 +48,7 @@ export class PayrollDetails implements OnInit {
   }
 
   goBack(): void {
-    void this.router.navigate(['/admin/payroll']);
+    void this.router.navigate([managementRoutePrefix(this.router), 'payroll']);
   }
 
   get period(): string {

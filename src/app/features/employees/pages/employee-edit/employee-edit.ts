@@ -11,6 +11,7 @@ import { PositionService } from '../../../positions/services/position.service';
 import { EmployeeDetails } from '../../models/employeedetails';
 import { EmployeeListItem } from '../../models/employee-list.model';
 import { EmployeeApiService } from '../../services/Employee.Service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -181,7 +182,11 @@ export class EmployeeEdit implements OnInit {
         }
 
         this.toastr.success('Employee updated successfully.', 'Success');
-        this.router.navigate(['/admin/employees', this.employeeId]);
+        this.router.navigate([
+          managementRoutePrefix(this.router),
+          'employees',
+          this.employeeId,
+        ]);
       },
       error: (error: HttpErrorResponse) => {
         console.error('Failed to update employee', error);
@@ -196,10 +201,14 @@ export class EmployeeEdit implements OnInit {
 
   goBack(): void {
     if (this.employeeId > 0) {
-      this.router.navigate(['/admin/employees', this.employeeId]);
+      this.router.navigate([
+        managementRoutePrefix(this.router),
+        'employees',
+        this.employeeId,
+      ]);
       return;
     }
-    this.router.navigate(['/admin/employees']);
+    this.router.navigate([managementRoutePrefix(this.router), 'employees']);
   }
 
   controlError(controlName: string): string | null {

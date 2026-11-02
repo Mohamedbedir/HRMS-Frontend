@@ -61,7 +61,9 @@ export class Login {
           ? ['/admin/dashboard']
           : this.authService.hasRole(Roles.Recruiter)
             ? ['/recruiter/applications']
-            : ['/dashboard'];
+            : this.authService.hasRole(Roles.HR)
+            ?['/hr/employees']
+            :['/dashboard'];
         this.router.navigate(destination);
       },
       error: (err: HttpErrorResponse) => {

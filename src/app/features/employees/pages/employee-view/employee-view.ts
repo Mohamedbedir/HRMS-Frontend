@@ -7,6 +7,7 @@ import { DateOrFallbackPipe } from '../../../../shared/pipes/date-or-fallback.pi
 import { EmploymentHistory } from '../../components/employment-history/employment-history';
 import { SalaryHistory } from '../../components/salary-history/salary-history';
 import { DocumentForEmployee } from '../../../employee-documents/components/document-for-employee/document-for-employee';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 @Component({
   imports: [DatePipe, CurrencyPipe, DateOrFallbackPipe, EmploymentHistory, SalaryHistory, DocumentForEmployee],
@@ -93,8 +94,7 @@ export class EmployeeView implements OnInit {
 
 
   goBack(): void {
-
-    this.router.navigate(['/admin/employees']);
+    this.router.navigate([managementRoutePrefix(this.router), 'employees']);
 
   }
 
@@ -106,7 +106,7 @@ export class EmployeeView implements OnInit {
       return;
     }
 
-    this.router.navigate(['/admin/employees', employeeId, 'edit']);
+    this.router.navigate([managementRoutePrefix(this.router), 'employees', employeeId, 'edit']);
 
   }
 

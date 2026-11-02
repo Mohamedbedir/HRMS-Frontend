@@ -11,6 +11,7 @@ import { PayrollApproveModal } from '../../components/payroll-approve-modal/payr
 import { PayrollCancelModal } from '../../components/payroll-cancel-modal/payroll-cancel-modal';
 import { PayrollGenerateModal } from '../../components/payroll-generate-modal/payroll-generate-modal';
 import { PayrollPayModal } from '../../components/payroll-pay-modal/payroll-pay-modal';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 type PayrollAction = 'approve' | 'cancel' | 'pay';
 
@@ -75,7 +76,7 @@ export class Payrolls implements OnInit {
   }
 
   openPayrollDetails(payroll: PayrollResponse): void {
-    void this.router.navigate(['/admin/payroll', payroll.id]);
+    void this.router.navigate([managementRoutePrefix(this.router), 'payroll', payroll.id]);
   }
 
   onRowKeydown(event: KeyboardEvent, payroll: PayrollResponse): void {

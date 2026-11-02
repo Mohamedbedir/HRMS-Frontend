@@ -68,6 +68,8 @@ export class DocumentDetails implements OnInit {
       ? '/admin/employee-documents'
       : this.router.url.startsWith('/recruiter/')
         ? '/recruiter/employee-documents'
+        : this.router.url.startsWith('/hr/')
+        ? '/hr/employee-documents'
         : '/my-documents';
     this.router.navigateByUrl(returnPath);
   }

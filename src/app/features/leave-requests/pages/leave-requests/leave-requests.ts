@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from '@relynn/ngx-toastr';
 import { LeaveApproveModal } from '../../components/leave-approve-modal/leave-approve-modal';
 import { LeaveCancelModal } from '../../components/leave-cancel-modal/leave-cancel-modal';
@@ -10,6 +10,7 @@ import { LeaveRequestModal } from '../../components/leave-request-modal/leave-re
 import { LeaveRequest } from '../../models/leave-request.model';
 import { LeaveRequestService } from '../../services/leave-request.service';
 import { TokenService } from '../../../../core/services/token.service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 type LeaveAction = 'approve' | 'cancel' | 'reject';
 
@@ -32,6 +33,7 @@ export class LeaveRequests implements OnInit {
   private readonly leaveRequestService = inject(LeaveRequestService);
   private readonly toastr = inject(ToastrService);
     private readonly tokenService = inject(TokenService);
+  private readonly router = inject(Router);
   
 
   readonly requests = signal<LeaveRequest[]>([]);
@@ -45,6 +47,10 @@ export class LeaveRequests implements OnInit {
   statusFilter = 'all';
   errorMessage = '';
   successMessage = '';
+
+  get routePrefix(): '/admin' | '/hr' {
+    return managementRoutePrefix(this.router);
+  }
 
   ngOnInit(): void {
     this.loadRequests();

@@ -3,6 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PerformanceReviewResponse } from '../../models/performance-review.model';
 import { PerformanceReviewService } from '../../services/performance-review.service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 @Component({
   imports: [DatePipe, DecimalPipe],
@@ -40,7 +41,7 @@ export class PerformanceReviewDetails implements OnInit {
   }
 
   goBack(): void {
-    void this.router.navigate(['/admin/performance-reviews']);
+    void this.router.navigate([managementRoutePrefix(this.router), 'performance-reviews']);
   }
 
   getScoreClass(score: number): string {

@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmployeeApiService, PagentedEmployeeQuery } from '../../services/Employee.Service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 import { EmployeeListItem } from '../../models/employee-list.model';
 import {
   EmployeeFilter,
@@ -128,11 +129,11 @@ export class Employees implements OnInit {
   }
 
   viewEmployee(id: number): void {
-    this.router.navigate(['/admin/employees', id]);
+    this.router.navigate([managementRoutePrefix(this.router), 'employees', id]);
   }
 
   editEmployee(id: number): void {
-    this.router.navigate(['/admin/employees', id, 'edit']);
+    this.router.navigate([managementRoutePrefix(this.router), 'employees', id, 'edit']);
   }
 
 

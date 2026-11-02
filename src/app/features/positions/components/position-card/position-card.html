@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-start gap-3">
       <a
         class="position-card-link stretched-link text-decoration-none text-body flex-grow-1"
-        [routerLink]="['/admin/positions', position.id]"
+        [routerLink]="[routePrefix, 'positions', position.id]"
         [attr.aria-label]="'View details for ' + position.title">
         <h5 class="card-title fw-semibold mb-2">{{ position.title }}</h5>
         <span

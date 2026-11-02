@@ -123,6 +123,8 @@ export class DocumentsForMe implements OnInit {
       ? '/admin/employee-documents'
       : this.router.url.startsWith('/recruiter/')
         ? '/recruiter/employee-documents'
+        : this.router.url.startsWith('/hr/')
+        ? '/hr/employee-documents'
         : '/my-documents';
     this.router.navigate([basePath, id]);
   }

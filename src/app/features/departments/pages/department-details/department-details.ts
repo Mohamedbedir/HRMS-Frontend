@@ -3,6 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DepartmentResponse } from '../../models/department-response';
 import { DepartmentService } from '../../services/department.service';
+import { managementRoutePrefix } from '../../../../core/utils/management-route';
 
 @Component({
   imports: [DatePipe],
@@ -61,6 +62,6 @@ export class DepartmentDetails implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/admin/departments']);
+    this.router.navigate([managementRoutePrefix(this.router), 'departments']);
   }
 }
