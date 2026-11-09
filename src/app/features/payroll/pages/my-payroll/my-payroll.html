@@ -1,0 +1,76 @@
+<main class="my-payroll-page container-fluid py-4">
+  <header class="page-header mb-4">
+    <div>
+      <span class="eyebrow">EMPLOYEE SELF-SERVICE</span>
+      <h1>My payroll</h1>
+      <p class="text-body-secondary mb-0">Review your salary records and payment history.</p>
+    </div>
+    <div class="payroll-total">
+      <span class="total-icon"><i class="bi bi-wallet2" aria-hidden="true"></i></span>
+      <span><small>Payroll records</small><strong>{{ payrolls().length }}</strong></span>
+    </div>
+  </header>
+
+  <section class="payroll-card" aria-labelledby="payroll-records-title">
+    <div class="card-heading">
+      <div>
+        <h2 id="payroll-records-title">Your payroll records</h2>
+        <p class="text-body-secondary mb-0">Select a payroll to view its salary breakdown.</p>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="state-message" role="status">
+        <span class="spinner-border text-primary" aria-hidden="true"></span>
+        <span>Loading your payroll records…</span>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="state-message error-state" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ errorMessage() }}</span>
+        @if (employeeId > 0) {
+          <button type="button" class="btn btn-sm btn-outline-primary ms-2" (click)="loadPayrolls()">Try again</button>
+        }
+      </div>
+    } @else if (payrolls().length === 0) {
+      <div class="state-message empty-state">
+        <span class="empty-icon"><i class="bi bi-receipt" aria-hidden="true"></i></span>
+        <strong>No payroll records yet</strong>
+        <span class="text-body-secondary">Your payroll history will appear here when it is available.</span>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table payroll-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Pay period</th>
+              <th scope="col">Basic salary</th>
+              <th scope="col">Gross pay</th>
+              <th scope="col">Deductions</th>
+              <th scope="col">Net pay</th>
+              <th scope="col">Status</th>
+              <th scope="col">Generated</th>
+              <th scope="col"><span class="visually-hidden">Details</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (payroll of payrolls(); track payroll.id) {
+              <tr class="payroll-row" tabindex="0" role="link"
+                (click)="openPayrollDetails(payroll)" (keydown)="onRowKeydown($event, payroll)"
+                [attr.aria-label]="'View payroll details for ' + monthName(payroll.month) + ' ' + payroll.year">
+                <td><span class="period-label">{{ monthName(payroll.month) }} {{ payroll.year }}</span></td>
+                <td>{{ payroll.basicSalary | currency:'EGP':'symbol':'1.2-2' }}</td>
+                <td>{{ payroll.grossSalary | currency:'EGP':'symbol':'1.2-2' }}</td>
+                <td>{{ payroll.totalDeductions | currency:'EGP':'symbol':'1.2-2' }}</td>
+                <td><strong>{{ payroll.netSalary | currency:'EGP':'symbol':'1.2-2' }}</strong></td>
+                <td><span class="status-badge" [ngClass]="statusClass(payroll.status)">{{ payroll.status }}</span></td>
+                <td>{{ payroll.generatedAt ? (payroll.generatedAt | date:'mediumDate') : '—' }}</td>
+                <td class="text-end"><i class="bi bi-chevron-right details-icon" aria-hidden="true"></i></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>

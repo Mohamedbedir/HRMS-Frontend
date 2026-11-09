@@ -57,11 +57,19 @@ export class LeaveRequestDetails implements OnInit {
   }
 
   goBack(): void {
-    void this.router.navigate([managementRoutePrefix(this.router), 'leave-requests']);
+    void this.router.navigate([this.routePrefix, 'leave-requests']);
   }
 
-  get routePrefix(): '/admin' | '/hr' {
+  get routePrefix(): '/admin' | '/hr' | '/manager' | '/employee' {
+    if (this.router.url === '/employee' || this.router.url.startsWith('/employee/')) {
+      return '/employee';
+    }
+
     return managementRoutePrefix(this.router);
+  }
+
+  get isEmployeeRoute(): boolean {
+    return this.routePrefix === '/employee';
   }
 
   getStatusClass(status: string): string {

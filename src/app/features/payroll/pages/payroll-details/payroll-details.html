@@ -21,9 +21,9 @@
   } @else if (payroll(); as item) {
     <header class="details-page-header">
       <div>
-        <span class="details-eyebrow"><i class="bi bi-wallet2 me-2" aria-hidden="true"></i>PAYROLL MANAGEMENT</span>
+        <span class="details-eyebrow"><i class="bi bi-wallet2 me-2" aria-hidden="true"></i>{{ isEmployeeView ? 'MY PAYROLL' : 'PAYROLL MANAGEMENT' }}</span>
         <h1>Payroll details</h1>
-        <p>Salary breakdown and payment items for this payroll period.</p>
+        <p>{{ isEmployeeView ? 'Your salary breakdown and payment items for this period.' : 'Salary breakdown and payment items for this payroll period.' }}</p>
       </div>
       <span class="period-pill"><i class="bi bi-calendar3" aria-hidden="true"></i>{{ period }}</span>
     </header>
@@ -141,23 +141,25 @@
       </div>
     </section>
 
-    <footer class="details-actions">
-      @if (canCancel(item)) {
-        <button type="button" class="btn btn-outline-danger" (click)="openAction('cancel')">
-          <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Cancel payroll
-        </button>
-      }
-      @if (canApprove(item)) {
-        <button type="button" class="btn btn-success" (click)="openAction('approve')">
-          <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Approve payroll
-        </button>
-      }
-      @if (canPay(item)) {
-        <button type="button" class="btn btn-primary" (click)="openAction('pay')">
-          <i class="bi bi-cash me-1" aria-hidden="true"></i>Mark as paid
-        </button>
-      }
-    </footer>
+    @if (!isEmployeeView) {
+      <footer class="details-actions">
+        @if (canCancel(item)) {
+          <button type="button" class="btn btn-outline-danger" (click)="openAction('cancel')">
+            <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Cancel payroll
+          </button>
+        }
+        @if (canApprove(item)) {
+          <button type="button" class="btn btn-success" (click)="openAction('approve')">
+            <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Approve payroll
+          </button>
+        }
+        @if (canPay(item)) {
+          <button type="button" class="btn btn-primary" (click)="openAction('pay')">
+            <i class="bi bi-cash me-1" aria-hidden="true"></i>Mark as paid
+          </button>
+        }
+      </footer>
+    }
   }
 </main>
 

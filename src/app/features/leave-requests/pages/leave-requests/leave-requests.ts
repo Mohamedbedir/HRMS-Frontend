@@ -11,6 +11,9 @@ import { LeaveRequest } from '../../models/leave-request.model';
 import { LeaveRequestService } from '../../services/leave-request.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { managementRoutePrefix } from '../../../../core/utils/management-route';
+import { Roles } from '../../../../core/constants/roles';
+import { EmployeeApiService } from '../../../employees/services/Employee.Service';
+import { forkJoin } from 'rxjs';
 
 type LeaveAction = 'approve' | 'cancel' | 'reject';
 
@@ -32,7 +35,8 @@ type LeaveAction = 'approve' | 'cancel' | 'reject';
 export class LeaveRequests implements OnInit {
   private readonly leaveRequestService = inject(LeaveRequestService);
   private readonly toastr = inject(ToastrService);
-    private readonly tokenService = inject(TokenService);
+  private readonly tokenService = inject(TokenService);
+  private readonly employeeApiService = inject(EmployeeApiService);
   private readonly router = inject(Router);
   
 
@@ -48,8 +52,12 @@ export class LeaveRequests implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  get routePrefix(): '/admin' | '/hr' {
+  get routePrefix(): '/admin' | '/hr' | '/manager' {
     return managementRoutePrefix(this.router);
+  }
+
+  get isManagerView(): boolean {
+    return this.router.url.startsWith('/manager/');
   }
 
   ngOnInit(): void {
@@ -60,8 +68,12 @@ export class LeaveRequests implements OnInit {
     this.loading.set(true);
     this.errorMessage = '';
 
-    // this.leaveRequestService.getByEmployee(this.tokenService.getEmployeeId()).subscribe({
-      this.leaveRequestService.getAll().subscribe({
+    if (this.tokenService.hasRole(Roles.Manager)) {
+      this.loadManagerRequests();
+      return;
+    }
+
+    this.leaveRequestService.getAll().subscribe({
       next: (response) => {
         this.loading.set(false);
 
@@ -80,6 +92,61 @@ export class LeaveRequests implements OnInit {
         this.toastr.error(this.errorMessage, 'Error');
       },
     });
+  }
+
+  private loadManagerRequests(): void {
+    const managerId = this.tokenService.getEmployeeId();
+    if (!Number.isSafeInteger(managerId) || managerId <= 0) {
+      this.failToLoadRequests('Your employee profile could not be identified. Please contact HR.');
+      return;
+    }
+
+    this.employeeApiService.GetAll().subscribe({
+      next: (response) => {
+        if (!response.succeeded || !Array.isArray(response.data)) {
+          this.failToLoadRequests(response.message || 'Failed to load your team.');
+          return;
+        }
+
+        const employeeIds = response.data
+          .filter((employee) => employee.managerId === managerId)
+          .map((employee) => employee.id);
+
+        if (employeeIds.length === 0) {
+          this.requests.set([]);
+          this.loading.set(false);
+          return;
+        }
+
+        forkJoin(employeeIds.map((id) => this.leaveRequestService.getByEmployee(id))).subscribe({
+          next: (responses) => {
+            const failedResponse = responses.find((item) => !item.succeeded);
+            if (failedResponse) {
+              this.failToLoadRequests(failedResponse.message || 'Failed to load leave requests.');
+              return;
+            }
+
+            this.requests.set(responses.flatMap((item) => item.data ?? []));
+            this.loading.set(false);
+          },
+          error: (error) => {
+            this.failToLoadRequests(
+              error?.error?.message || 'An error occurred while loading leave requests.',
+            );
+          },
+        });
+      },
+      error: (error) => {
+        this.failToLoadRequests(error?.error?.message || 'Failed to load your team.');
+      },
+    });
+  }
+
+  private failToLoadRequests(message: string): void {
+    this.loading.set(false);
+    this.requests.set([]);
+    this.errorMessage = message;
+    this.toastr.error(message, 'Error');
   }
 
   filteredRequests(): LeaveRequest[] {

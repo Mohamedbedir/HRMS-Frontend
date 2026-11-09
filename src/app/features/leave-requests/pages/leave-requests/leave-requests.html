@@ -3,8 +3,14 @@
         <div>
             <div class="page-eyebrow"><i class="bi bi-calendar2-week me-2" aria-hidden="true"></i>People operations
             </div>
-            <h1 class="fw-bold mb-1">Leave requests</h1>
-            <p class="text-body-secondary mb-0">Review employee time-off requests and keep track of their status.</p>
+            <h1 class="fw-bold mb-1">{{ isManagerView ? 'Team leave requests' : 'Leave requests' }}</h1>
+            <p class="text-body-secondary mb-0">
+                @if (isManagerView) {
+                    Review time-off requests submitted by your direct reports.
+                } @else {
+                    Review employee time-off requests and keep track of their status.
+                }
+            </p>
         </div>
         <button type="button" class="btn btn-primary create-request-button" (click)="createModalOpen.set(true)">
             <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>New request

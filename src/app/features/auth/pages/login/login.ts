@@ -63,6 +63,10 @@ export class Login {
             ? ['/recruiter/applications']
             : this.authService.hasRole(Roles.HR)
             ?['/hr/employees']
+            : this.authService.hasRole(Roles.Employee)
+            ?['/employee/employee-documents']
+             : this.authService.hasRole(Roles.Manager)
+            ?['/manager']
             :['/dashboard'];
         this.router.navigate(destination);
       },

@@ -7,7 +7,13 @@
             <div>
                 <p class="page-eyebrow mb-1">TIME &amp; ATTENDANCE</p>
                 <h1 class="h3 fw-bold mb-1">Attendance</h1>
-                <p class="text-body-secondary mb-0">Manage your daily check-in, check-out, and attendance history.</p>
+                <p class="text-body-secondary mb-0">
+                    @if (isManagerView) {
+                        Manage your daily attendance and review your team's attendance history.
+                    } @else {
+                        Manage your daily check-in, check-out, and attendance history.
+                    }
+                </p>
             </div>
         </div>
 
@@ -86,7 +92,13 @@
             <div>
                 <p class="section-eyebrow mb-1">ACTIVITY</p>
                 <h2 id="attendance-records-heading" class="h5 fw-bold mb-1">Attendance records</h2>
-                <p class="text-body-secondary mb-0">Review check-in times, work status, and daily totals.</p>
+                <p class="text-body-secondary mb-0">
+                    @if (isManagerView) {
+                        Review your attendance and the attendance of your direct reports.
+                    } @else {
+                        Review check-in times, work status, and daily totals.
+                    }
+                </p>
             </div>
 
             <button class="btn btn-refresh" type="button" [disabled]="loading" (click)="loadAttendance()">

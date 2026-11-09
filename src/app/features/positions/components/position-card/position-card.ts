@@ -17,7 +17,7 @@ export class PositionCard {
   @Output() edit = new EventEmitter<PositionResponse>();
   @Output() delete = new EventEmitter<PositionResponse>();
 
-  get routePrefix(): '/admin' | '/hr' {
+  get routePrefix(): '/admin' | '/hr' | '/manager' {
     return managementRoutePrefix(this.router);
   }
 }

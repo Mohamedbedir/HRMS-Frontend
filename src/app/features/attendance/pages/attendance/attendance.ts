@@ -4,7 +4,10 @@ import { AttendanceService } from '../../services/attendance.service';
 import { AttendanceResponse } from '../../models/Attendance-Response';
 import { ToastrService } from '@relynn/ngx-toastr';
 import { FormsModule } from '@angular/forms';
-import { finalize, timeout } from 'rxjs';
+import { finalize, forkJoin, timeout } from 'rxjs';
+import { Router } from '@angular/router';
+import { EmployeeApiService } from '../../../employees/services/Employee.Service';
+import { TokenService } from '../../../../core/services/token.service';
 
 @Component({
   imports: [DatePipe, FormsModule],
@@ -16,6 +19,9 @@ export class Attendance implements OnInit {
   private readonly requestTimeoutMs = 30_000;
   private readonly attendanceService = inject(AttendanceService);
   private readonly toastr=inject(ToastrService);
+  private readonly router = inject(Router);
+  private readonly employeeService = inject(EmployeeApiService);
+  private readonly tokenService = inject(TokenService);
 
   attendanceRecords = signal<AttendanceResponse[]>([]);
 
@@ -45,6 +51,11 @@ export class Attendance implements OnInit {
   loadAttendance(): void {
     this.loading = true;
     this.errorMessage = '';
+
+    if (this.isManagerView) {
+      this.loadManagerAttendance();
+      return;
+    }
 
     this.attendanceService
       .getMyAttendances()
@@ -90,6 +101,11 @@ export class Attendance implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
+    if (this.isManagerView) {
+      this.loadManagerAttendance(this.fromDate, this.toDate);
+      return;
+    }
+
     this.attendanceService.getMyAttendancesByDate(this.fromDate, this.toDate)
       .pipe(
         timeout({ first: this.requestTimeoutMs }),
@@ -116,6 +132,75 @@ export class Attendance implements OnInit {
           this.toastr.error(this.errorMessage, 'Error');
         }
       });
+  }
+
+  get isManagerView(): boolean {
+    return this.router.url.startsWith('/manager/');
+  }
+
+  private loadManagerAttendance(fromDate?: string, toDate?: string): void {
+    const managerId = this.tokenService.getEmployeeId();
+    if (!Number.isSafeInteger(managerId) || managerId <= 0) {
+      this.handleManagerAttendanceError(
+        'Your employee profile could not be identified. Please contact HR.',
+      );
+      return;
+    }
+
+    this.employeeService.GetAll().subscribe({
+      next: (response) => {
+        if (!response.succeeded || !Array.isArray(response.data)) {
+          this.handleManagerAttendanceError(response.message || 'Failed to load your team.');
+          return;
+        }
+
+        const employeeIds = [
+          managerId,
+          ...response.data
+            .filter((employee) => employee.managerId === managerId)
+            .map((employee) => employee.id),
+        ];
+        const requests = employeeIds.map((employeeId) =>
+          fromDate && toDate
+            ? this.attendanceService.getMyAttendancesByDate(fromDate, toDate, employeeId)
+            : this.attendanceService.getMyAttendances(employeeId),
+        );
+
+        forkJoin(requests).subscribe({
+          next: (responses) => {
+            const failedResponse = responses.find(
+              (item) => !item.succeeded || !Array.isArray(item.data),
+            );
+            if (failedResponse) {
+              this.handleManagerAttendanceError(
+                failedResponse.message || 'Failed to load attendance records.',
+              );
+              return;
+            }
+
+            this.attendanceRecords.set(responses.flatMap((item) => item.data ?? []));
+            this.loading = false;
+          },
+          error: (error) => {
+            this.handleManagerAttendanceError(
+              this.getRequestErrorMessage(error, 'Failed to load attendance records.'),
+            );
+          },
+        });
+      },
+      error: (error) => {
+        this.handleManagerAttendanceError(
+          this.getRequestErrorMessage(error, 'Failed to load your team.'),
+        );
+      },
+    });
+  }
+
+  private handleManagerAttendanceError(message: string): void {
+    this.loading = false;
+    this.attendanceRecords.set([]);
+    this.errorMessage = message;
+    this.toastr.error(message, 'Error');
   }
   checkIn(): void {
     if (this.checkInSubmitting() || this.checkOutSubmitting()) {

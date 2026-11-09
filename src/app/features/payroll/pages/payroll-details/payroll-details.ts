@@ -31,6 +31,13 @@ export class PayrollDetails implements OnInit {
 
   private payrollId: number | null = null;
 
+  get isEmployeeView(): boolean {
+    return (
+      this.router.url.startsWith('/employee/payroll/') ||
+      this.router.url.startsWith('/manager/payroll/')
+    );
+  }
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isInteger(id) || id <= 0) {
@@ -48,6 +55,11 @@ export class PayrollDetails implements OnInit {
   }
 
   goBack(): void {
+    if (this.isEmployeeView) {
+      const routePrefix = this.router.url.startsWith('/manager/') ? '/manager' : '/employee';
+      void this.router.navigate([routePrefix, 'payroll']);
+      return;
+    }
     void this.router.navigate([managementRoutePrefix(this.router), 'payroll']);
   }
 

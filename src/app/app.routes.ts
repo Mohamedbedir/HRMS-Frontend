@@ -263,6 +263,104 @@ export const routes: Routes = [
     ],
   },
 
+  // Manager
+  {
+    path: 'manager',
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: [Roles.Manager],
+    },
+    loadComponent: () =>
+      import('./layouts/manager-layout/manager-layout').then((m) => m.ManagerLayout),
+    children: [
+      {
+        path: 'employees/:id',
+        title: 'My Profile',
+        loadComponent: () =>
+          import('./features/employees/pages/employee-view/employee-view').then(
+            (m) => m.EmployeeView,
+          ),
+      },
+      {
+        path: 'attendance',
+        title: 'Attendance',
+        loadComponent: () =>
+          import('./features/attendance/pages/attendance/attendance').then((m) => m.Attendance),
+      },
+      {
+        path: 'performance-reviews',
+        title: 'Performance Reviews',
+        loadComponent: () =>
+          import('./features/performance/pages/performance-reviews/performance-reviews').then(
+            (m) => m.PerformanceReviews,
+          ),
+      },
+      {
+        path: 'performance-reviews/:id',
+        title: 'Performance Review Details',
+        loadComponent: () =>
+          import(
+            './features/performance/pages/performance-review-details/performance-review-details'
+          ).then((m) => m.PerformanceReviewDetails),
+      },
+      {
+        path: 'leave-requests',
+        title: 'Leave Requests',
+        loadComponent: () =>
+          import('./features/leave-requests/pages/leave-requests/leave-requests').then(
+            (m) => m.LeaveRequests,
+          ),
+      },
+      {
+        path: 'leave-requests/:id',
+        title: 'Leave Request Details',
+        loadComponent: () =>
+          import('./features/leave-requests/pages/leave-request-details/leave-request-details').then(
+            (m) => m.LeaveRequestDetails,
+          ),
+      },
+      {
+        path: 'payroll',
+        title: 'My Payroll',
+        loadComponent: () =>
+          import('./features/payroll/pages/my-payroll/my-payroll').then((m) => m.MyPayroll),
+      },
+      {
+        path: 'payroll/:id',
+        title: 'Payroll Details',
+        loadComponent: () =>
+          import('./features/payroll/pages/payroll-details/payroll-details').then(
+            (m) => m.PayrollDetails,
+          ),
+      },
+      {
+        path: 'employee-documents/:id',
+        title: 'Document Details',
+        loadComponent: () =>
+          import('./features/employee-documents/pages/document-details/document-details').then(
+            (m) => m.DocumentDetails,
+          ),
+      },
+      {
+        path: 'employee-documents',
+        title: 'My Documents',
+        loadComponent: () =>
+          import('./features/employee-documents/pages/documents-for-me/documents-for-me').then(
+            (m) => m.DocumentsForMe,
+          ),
+      },
+      {
+        path: '',
+        title: 'My Profile',
+        loadComponent: () =>
+          import('./features/employees/pages/employee-view/employee-view').then(
+            (m) => m.EmployeeView,
+          ),
+        pathMatch: 'full',
+      },
+    ],
+  },
+
   // recruiter
   {
     path: 'recruiter',
@@ -518,6 +616,110 @@ export const routes: Routes = [
       },
     ],
   },
+
+  // employee
+  {
+    path: 'employee',
+
+    canActivate: [authGuard, roleGuard],
+
+    data: {
+      roles: [Roles.Employee],
+    },
+
+    loadComponent: () => import('./layouts/employee-layout/employee-layout').then((m) => m.EmployeeLayout),
+
+    children: [
+
+
+      
+      {
+        path: 'employees/:id',
+        title: 'Profile Details',
+        data: { title: 'Profile Details' },
+        loadComponent: () =>
+          import('./features/employees/pages/employee-view/employee-view').then(
+            (m) => m.EmployeeView,
+          ),
+      },
+
+
+      
+      {
+        path: 'leave-requests',
+        title: 'My Leave Requests',
+        data: { title: 'My Leave Requests' },
+        loadComponent: () =>
+          import('./features/leave-requests/pages/my-leave-requests/my-leave-requests').then(
+            (m) => m.MyLeaveRequests,
+          ),
+      },
+      {
+        path: 'leave-requests/:id',
+        title: 'Leave Request Details',
+        data: { title: 'Leave Request Details' },
+        loadComponent: () =>
+          import('./features/leave-requests/pages/leave-request-details/leave-request-details').then(
+            (m) => m.LeaveRequestDetails,
+          ),
+      },
+      {
+        path: 'payroll',
+        title: 'Payroll',
+        data: { title: 'Payroll' },
+        loadComponent: () =>
+          import('./features/payroll/pages/my-payroll/my-payroll').then(
+            (m) => m.MyPayroll,
+          ),
+      },
+      {
+        path: 'payroll/:id',
+        title: 'Payroll Details',
+        data: { title: 'Payroll Details' },
+        loadComponent: () =>
+          import('./features/payroll/pages/payroll-details/payroll-details').then(
+            (m) => m.PayrollDetails,
+          ),
+      },
+      {
+        path: 'employee-documents/:id',
+        title: 'Document Details',
+        data: { title: 'Document Details' },
+        loadComponent: () =>
+          import('./features/employee-documents/pages/document-details/document-details').then(
+            (m) => m.DocumentDetails,
+          ),
+      },
+      {
+        path: 'employee-documents',
+        title: 'Employee Documents',
+        data: { title: 'Employee Documents' },
+        loadComponent: () =>
+          import('./features/employee-documents/pages/documents-for-me/documents-for-me').then(
+            (m) => m.DocumentsForMe,
+          ),
+      },
+      
+      {
+        path: 'attendance',
+        title: 'Attendance',
+        data: { title: 'Attendance' },
+        loadComponent: () =>
+          import('./features/attendance/pages/attendance/attendance').then((m) => m.Attendance),
+      },
+     
+      {
+        path: '',
+        title: 'Profile Details',
+        loadComponent: () =>
+          import('./features/employees/pages/employee-view/employee-view').then(
+            (m) => m.EmployeeView,
+          ),
+        pathMatch: 'full',
+      },
+    ],
+  },
+
 
 
 

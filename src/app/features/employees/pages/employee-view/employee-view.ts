@@ -2,12 +2,13 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeApiService } from '../../services/Employee.Service';
 import { EmployeeDetails } from '../../models/employeedetails';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, Location } from '@angular/common';
 import { DateOrFallbackPipe } from '../../../../shared/pipes/date-or-fallback.pipe';
 import { EmploymentHistory } from '../../components/employment-history/employment-history';
 import { SalaryHistory } from '../../components/salary-history/salary-history';
 import { DocumentForEmployee } from '../../../employee-documents/components/document-for-employee/document-for-employee';
 import { managementRoutePrefix } from '../../../../core/utils/management-route';
+import { TokenService } from '../../../../core/services/token.service';
 
 @Component({
   imports: [DatePipe, CurrencyPipe, DateOrFallbackPipe, EmploymentHistory, SalaryHistory, DocumentForEmployee],
@@ -21,8 +22,11 @@ export class EmployeeView implements OnInit {
 
   private readonly router =inject(Router);
 
+  private readonly loc = inject(Location);
+
   private readonly employeeApiService =inject(EmployeeApiService);
 
+  private readonly tokenService = inject(TokenService);
 
   employee=signal<EmployeeDetails | null>(null);
 
@@ -34,9 +38,12 @@ export class EmployeeView implements OnInit {
 
   ngOnInit(): void {
 
-    const id =Number(this.route.snapshot.paramMap.get('id'));
+    const routeId = this.route.snapshot.paramMap.get('id');
+    const id = routeId === null
+      ? this.tokenService.getEmployeeId()
+      : Number(routeId);
 
-    if (!id) {
+    if (!Number.isSafeInteger(id) || id <= 0) {
 
       this.hasError = true;
       this.isLoading = false;
@@ -92,10 +99,18 @@ export class EmployeeView implements OnInit {
     this.activeTab = tab;
   }
 
+  get isEmployeeRoute(): boolean {
+    return (
+      this.router.url === '/employee' ||
+      this.router.url.startsWith('/employee/') ||
+      this.router.url.startsWith('/manager/')
+    );
+  }
+
 
   goBack(): void {
-    this.router.navigate([managementRoutePrefix(this.router), 'employees']);
-
+    // this.router.navigate([managementRoutePrefix(this.router), 'employees']);
+    this.loc.back();
   }
 
 

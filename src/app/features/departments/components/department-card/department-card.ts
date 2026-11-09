@@ -17,7 +17,7 @@ export class DepartmentCard {
   @Output() edit = new EventEmitter<DepartmentResponse>();
   @Output() delete = new EventEmitter<DepartmentResponse>();
 
-  get routePrefix(): '/admin' | '/hr' {
+  get routePrefix(): '/admin' | '/hr' | '/manager' {
     return managementRoutePrefix(this.router);
   }
 }

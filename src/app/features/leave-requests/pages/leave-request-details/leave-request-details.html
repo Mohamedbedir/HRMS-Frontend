@@ -124,12 +124,14 @@
         (click)="openAction('cancel')">
         <i class="bi bi-slash-circle me-2" aria-hidden="true"></i>Cancel request
       </button>
+      @if (!isEmployeeRoute) {
       <button type="button" class="btn btn-outline-danger" [disabled]="actionLoading()" (click)="openAction('reject')">
         <i class="bi bi-x-lg me-2" aria-hidden="true"></i>Reject
       </button>
       <button type="button" class="btn btn-success" [disabled]="actionLoading()" (click)="openAction('approve')">
         <i class="bi bi-check-lg me-2" aria-hidden="true"></i>Approve
       </button>
+      }
     </div>
   </footer>
   }
